@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "347620005254",
+    "firebase_url": "https://vsewa-ebc40.firebaseio.com",
+    "project_id": "vsewa-ebc40",
+    "storage_bucket": "vsewa-ebc40.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:347620005254:android:0849a6937374e47ecac807",
+        "android_client_info": {
+          "package_name": "com.example.vsewa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "347620005254-efge06p96pb7mcgjgjsj5ec4n688t1qd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vsewa",
+            "certificate_hash": "b28ed798dc208d540d4b62815ddeb33f937aed8e"
+          }
+        },
+        {
+          "client_id": "347620005254-dc1pg3edhetuccfsoa7d78ka5olq3n9o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdd9RG5Ca1EbtE0mcYci82p9WN8d19V60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "347620005254-dc1pg3edhetuccfsoa7d78ka5olq3n9o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
