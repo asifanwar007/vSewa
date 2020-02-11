@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NoInternetTheme">
-
+        <activity android:name=".Authentication.RegisterWithEmailActivity"></activity>
+        <activity android:name=".Authentication.ForgotPassword" />
+        <activity android:name=".Authentication.LoginWithEmailIdNeedy"/>
+        <activity android:name=".Authentication.LoginWithEmailIdVolunteer"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,7 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Welcome screen activity start first and then Main Activity Starts -->
-        <activity android:name=".WelcomeScreen"></activity>
+        <activity android:name=".WelcomeScreen" />
     </application>
 
 </manifest>

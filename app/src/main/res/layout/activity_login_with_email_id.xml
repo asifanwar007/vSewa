@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Authentication.LoginWithEmail">
+    tools:context=".Authentication.LoginWithEmailIdNeedy">
 
     <TextView
         android:id="@+id/textView"
@@ -36,8 +36,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:hint="Email"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:layout_editor_absoluteX="0dp" />
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
         android:id="@+id/login"
