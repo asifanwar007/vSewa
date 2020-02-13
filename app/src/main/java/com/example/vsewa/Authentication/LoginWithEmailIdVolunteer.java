@@ -35,6 +35,7 @@ import am.appwise.components.ni.NoInternetDialog;
 public class LoginWithEmailIdVolunteer extends AppCompatActivity {
     private EditText passwd;
     private TextInputEditText emailId;
+    private TextView switchTotv, switchTotvButton;
 
     private Button login;
     private FirebaseAuth mAuth;
@@ -54,6 +55,10 @@ public class LoginWithEmailIdVolunteer extends AppCompatActivity {
         setContentView(R.layout.activity_login_with_email_id);
         noInternetDialog = new NoInternetDialog.Builder(this).build();
         noInternetDialog.show();
+        switchTotv = findViewById(R.id.tvSwitchNeedyVolunteer);
+        switchTotvButton = findViewById(R.id.tvSwitchAtLoginPage);
+        switchTotv.setText("Volunteer");
+        switchTotvButton.setText("Needy");
 
         emailId = findViewById(R.id.username);
         passwd= findViewById(R.id.password);
@@ -62,6 +67,15 @@ public class LoginWithEmailIdVolunteer extends AppCompatActivity {
         forgotPassword = findViewById(R.id.tvFrogotPassword);
         dialog=new ProgressDialog(this);
         dialog.setMessage("Please wait,Logging in........");
+
+        switchTotvButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent loginNeedyIntent = new Intent(LoginWithEmailIdVolunteer.this, LoginWithEmailIdNeedy.class);
+                startActivity(loginNeedyIntent);
+                finish();
+            }
+        });
 
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +129,7 @@ public class LoginWithEmailIdVolunteer extends AppCompatActivity {
                                         DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference();
                                         String current_user =mAuth.getCurrentUser().getUid();
                                         String device_token= FirebaseInstanceId.getInstance().getToken();
-                                        databaseReference.child("Users").child(current_user).child("device_token").setValue(device_token).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        databaseReference.child("Users").child("Volunteer").child(current_user).child("device_token").setValue(device_token).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
@@ -176,7 +190,7 @@ public class LoginWithEmailIdVolunteer extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        moveTaskToBack(false);
+        moveTaskToBack(true);
 
     }
 

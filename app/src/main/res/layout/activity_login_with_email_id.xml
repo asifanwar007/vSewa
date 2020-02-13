@@ -7,23 +7,38 @@
     tools:context=".Authentication.LoginWithEmailIdNeedy">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tvLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="Login"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textAppearance="@android:style/TextAppearance.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tvSwitchNeedyVolunteer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        android:textStyle="bold"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toEndOf="@+id/tvLogin"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:ems="10"
         android:hint="Password"
+        app.passwordToggleEnabled="true"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -37,7 +52,7 @@
         android:layout_marginTop="50dp"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLogin" />
 
     <Button
         android:id="@+id/login"
@@ -52,6 +67,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvFrogotPassword" />
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -75,7 +91,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sign Up"
-            android:textStyle="bold"/>
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <TextView
@@ -86,6 +103,44 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
         android:text="Frogot Password?"
+        android:textAppearance="@android:style/TextAppearance.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password" />
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Switch To" />
+
+        <TextView
+            android:id="@+id/tvSwitchAtLoginPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:layout_weight="1"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Login" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
