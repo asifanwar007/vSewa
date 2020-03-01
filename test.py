@@ -14,5 +14,7 @@ helo(name)
 print("Hello world")
 print("This file suxx")
 
+print("maa ka")
+
 
 
