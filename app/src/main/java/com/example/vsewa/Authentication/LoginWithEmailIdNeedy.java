@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vsewa.MainActivity;
+import com.example.vsewa.NavigationButton.BottomNavigatioActivity;
 import com.example.vsewa.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -73,7 +74,7 @@ public class LoginWithEmailIdNeedy extends AppCompatActivity {
             public void onClick(View view) {
                 Intent loginNeedyIntent = new Intent(LoginWithEmailIdNeedy.this, LoginWithEmailIdVolunteer.class);
                 startActivity(loginNeedyIntent);
-                finish();
+
             }
         });
 
@@ -134,7 +135,7 @@ public class LoginWithEmailIdNeedy extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
 
                                                 dialog.dismiss();
-                                                Intent i=new Intent(LoginWithEmailIdNeedy.this, MainActivity.class);
+                                                Intent i=new Intent(LoginWithEmailIdNeedy.this, BottomNavigatioActivity.class);
                                                 startActivity(i);
                                                 finish();
 

@@ -3,4 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="Blue">#7b4bff</color>
+    <color name="DarkBlue">#6539ba</color>
+    <color name="LightPink">#FF4081</color>
+    <color name="bgBottomNavigation">#fe485a</color>
 </resources>
