@@ -5,6 +5,7 @@ def helo(name):
 	print("hello" + name)
 name=input()
 
+print("abslan change ")
 helo(name)
 
 # if __name__ == '__main__':
