@@ -1,10 +1,5 @@
-print("hello world")
 
-def helo(name):
-	print("hello" + name)
-name=input()
+print("Hello world")
+print("This file suxx")
 
-helo(name)
 
-# if __name__ == '__main__':
-	# helo(name)
