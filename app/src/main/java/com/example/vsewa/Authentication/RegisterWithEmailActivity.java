@@ -5,13 +5,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +29,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -35,6 +39,7 @@ import android.widget.Toast;
 import com.example.vsewa.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -95,6 +100,8 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private NoInternetDialog noInternetDialog;
     private ImageView imageView;
+    private Uri imageUri, imageUriSelfie;
+    private Bitmap imageBitmap, icardImageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +117,7 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         databaseRef= FirebaseDatabase.getInstance().getReference();
-        mStorageRef = FirebaseStorage.getInstance().getReference();
+        mStorageRef = FirebaseStorage.getInstance().getReference("Images");
         tpEmail=findViewById(R.id.etUsername);
         tpFirstName= findViewById(R.id.etFirstName);
         tpLastName = findViewById(R.id.etLastName);
@@ -314,21 +321,23 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
                                             } else {
                                                 if(upload.getText().toString().equals("Uploaded")){
                                                     if(checkBox.isChecked()){
+                                                        progressDialog.setMessage("Progress Dialog Checked");
                                                         mAuth.createUserWithEmailAndPassword(email, password)
                                                                 .addOnCompleteListener(RegisterWithEmailActivity.this, new OnCompleteListener<AuthResult>() {
                                                                     @Override
                                                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                                                         if(task.isSuccessful()){
+                                                                            progressDialog.setMessage("Hello brother");
                                                                             user = mAuth.getCurrentUser();
                                                                             savedDetails();
                                                                         }else {
                                                                             Toast.makeText(RegisterWithEmailActivity.this, "Mail appears to be existing, please try with another mail", Toast.LENGTH_SHORT).show();
                                                                             tpEmail.setEnabled(true);
-                                                                            tpUserName.setEnabled(true);
+//                                                                            tpUserName.setEnabled(true);
                                                                             tpPhoneNumber.setEnabled(true);
                                                                             tpPassword.setEnabled(true);
                                                                             tpAge.setEnabled(true);
-                                                                            tpReferral.setEnabled(true);
+//                                                                            tpReferral.setEnabled(true);
                                                                             tpCity.setEnabled(true);
                                                                             checkBox.setEnabled(true);
                                                                             radioGroup.setEnabled(true);
@@ -386,102 +395,138 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
         selfie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                        if (ContextCompat.checkSelfPermission(RegisterWithEmailActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-////                    takePictureButton.setEnabled(false);
-//                            ActivityCompat.requestPermissions(RegisterWithEmailActivity.this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
-//                        }else{
+                        if (ContextCompat.checkSelfPermission(RegisterWithEmailActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                    takePictureButton.setEnabled(false);
+                            ActivityCompat.requestPermissions(RegisterWithEmailActivity.this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+                        }else{
                             dispatchPictureTakenAction();
-//                        }
+                        }
             }
         });
     }
 
     private void savedDetails(){
+        progressDialog.setMessage("inside save details");
         try{
-            final StorageReference filepath = mStorageRef.child("Image").child(user.getUid()).child("Selfie");
-//            databaseRef =
-//            Task<Uri> uriTask
-            BitmapDrawable bitmapDrawable = ((BitmapDrawable) imageView.getDrawable());
-            Bitmap bitmap = bitmapDrawable.getBitmap();
+
+//            BitmapDrawable bitmapDrawable = ((BitmapDrawable) imageView.getDrawable());
+//            Bitmap bitmap = bitmapDrawable.getBitmap();
+            final String currentTimeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             final byte[] imageInByte = stream.toByteArray();
-            Task<Uri> uriTask = filepath.putBytes(imageInByte).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            final StorageReference Ref = mStorageRef.child(prefrences).child(user.getUid()).child(currentTimeStamp + "_selfie");
+            Task<Uri> uriTask = Ref.putBytes(imageInByte).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                     if(!task.isSuccessful()){
                         throw task.getException();
                     }
 
-                    return  filepath.getDownloadUrl();
+                    return Ref.getDownloadUrl();
                 }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if(task.isSuccessful()){
-                        String device_token = FirebaseInstanceId.getInstance().getToken();
-                        String time;
-                        Calendar calendar = Calendar.getInstance();
-                        if (calendar.get(Calendar.AM_PM) == Calendar.AM) {
-                            time = "" + calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " AM";
-                        } else {
-                            time = "" + calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " PM";
-
-                        }
-                        String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-
-                        Uri image_uri = task.getResult();
-                        Map<String, Object> userDetails = new HashMap<>();
-                        userDetails.put("email", email);
-                        userDetails.put("fullName", userName);
-                        userDetails.put("phoneNumber", phoneNumber);
-                        userDetails.put("city", city);
-                        userDetails.put("Age", age);
-                        userDetails.put("gender", gender);
-                        userDetails.put("noOfLogin", 0);
-                        userDetails.put("friends", 0);
-//                        userDetails.put("noOfLifts", 0);
-                        userDetails.put("rating", 0);
-                        userDetails.put("comments", 0);
-                        userDetails.put("device_token", Objects.requireNonNull(device_token));
-                        userDetails.put("profile_image", "default");
-                        userDetails.put("timeOfJoining", time);
-                        userDetails.put("dateOfJoining", date);
-//                        userDetails.put("referralPoints", 0);
-//                        userDetails.put("usedReferralPoints", 0);
-                        userDetails.put("isLoggedIn", "no");
-                        userDetails.put("id_proof", image_uri.toString());
-                        userDetails.put("selfie", image_uri.toString());
-//                        databaseRef.child("Referral_codes").child(referCode).setValue(user.getUid().toString());
-//                        databaseRef.child("Users").child(prefrences).child(user.getUid()).child("wallet_Balance").setValue(0);
-//                        referral_uid = (String) referralUid.getText();
-                        DatabaseReference usersRef = databaseRef.child("Users").child(prefrences).child(user.getUid());
-                        usersRef.setValue(userDetails).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                user.sendEmailVerification()
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            })
+                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if(task.isSuccessful()){
+                                progressDialog.setMessage("Slefie Uploaded");
+                                imageUriSelfie = task.getResult();
+//                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                                icardImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//                                final byte[] imageInByte = stream.toByteArray();
+                                final StorageReference Ref1 = mStorageRef.child(prefrences).child(user.getUid()).child(currentTimeStamp + "_id");
+//                                Ref1.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                                    @Override
+//                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                        progressDialog.setMessage("icard uploaded");
+//                                        imageUri = Ref1.getDownloadUrl();
+//                                    }
+//                                });
+                                Task<Uri> uriTask1 = Ref1.putFile(imageUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                    @Override
+                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                        if(!task.isSuccessful()){
+                                            throw task.getException();
+                                        }
+                                        return Ref1.getDownloadUrl();
+                                    }
+                                })
+                                        .addOnCompleteListener(new OnCompleteListener<Uri>() {
                                             @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
+                                            public void onComplete(@NonNull Task<Uri> task) {
+                                                if(task.isSuccessful()){
+                                                    progressDialog.setMessage("Icard Uploaded");
+                                                    Log.d("icardpic", "error");
+                                                    imageUri = task.getResult();
+                                                    String device_token = FirebaseInstanceId.getInstance().getToken();
+                                                    String time;
+                                                    Calendar calendar = Calendar.getInstance();
+                                                    if (calendar.get(Calendar.AM_PM) == Calendar.AM) {
+                                                        time = "" + calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " AM";
+                                                    } else {
+                                                        time = "" + calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " PM";
 
-                                                    Intent intent = new Intent(RegisterWithEmailActivity.this, LoginWithEmailIdVolunteer.class);
-                                                    startActivity(intent);
-                                                    finish();
-                                                    progressDialog.dismiss();
-
-
+                                                    }
+                                                    String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+                                                    progressDialog.setMessage("inside save details..........");
+                                                    Map<String, Object> userDetails = new HashMap<>();
+                                                    userDetails.put("email", email);
+                                                    userDetails.put("fullName", userName);
+                                                    userDetails.put("phoneNumber", phoneNumber);
+                                                    userDetails.put("city", city);
+                                                    userDetails.put("Age", age);
+                                                    userDetails.put("gender", gender);
+                                                    userDetails.put("noOfLogin", 0);
+                                                    userDetails.put("friends", 0);
+                                                    userDetails.put("rating", 0);
+                                                    userDetails.put("comments", 0);
+                                                    progressDialog.setMessage("TOken ke pass");
+                                                    userDetails.put("device_token", Objects.requireNonNull(device_token));
+                                                    userDetails.put("profile_image", "default");
+                                                    userDetails.put("timeOfJoining", time);
+                                                    userDetails.put("dateOfJoining", date);
+                                                    userDetails.put("isLoggedIn", "no");
+                                                    progressDialog.setMessage("Id proof ke pass");
+                                                    userDetails.put("id_proof", imageUriSelfie.toString());
+                                                    progressDialog.setMessage("selfie ke pass");
+                                                    userDetails.put("selfie", imageUriSelfie.toString());
+                                                    progressDialog.setMessage("Setting Database");
+                                                    DatabaseReference usersRef = databaseRef.child("Users").child(prefrences).child(user.getUid());
+                                                    usersRef.setValue(userDetails).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            user.sendEmailVerification()
+                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                progressDialog.setMessage("User invitation send");
+//                                                                                Toast.makeText(RegisterWithEmailActivity.this, "Please Confirm your Email First", Toast.LENGTH_LONG).show();
+                                                                                Intent intent = new Intent(RegisterWithEmailActivity.this, LoginWithEmailIdVolunteer.class);
+                                                                                startActivity(intent);
+                                                                                finish();
+                                                                                progressDialog.dismiss();
+                                                                            }
+                                                                        }
+                                                                    });
+                                                        }
+                                                    });
+                                                }else{
+                                                    Toast.makeText(RegisterWithEmailActivity.this, "Error in uploading Icard", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         });
+                            }else{
+                                Toast.makeText(RegisterWithEmailActivity.this, "Error in Uploading selfie Image", Toast.LENGTH_SHORT).show();
                             }
-                        });
+                        }
+                    });
 
-                    }
-                }
-            });
 
         }catch (Exception e){
+            progressDialog.dismiss();
+            Toast.makeText(RegisterWithEmailActivity.this, "Something Went wrong", Toast.LENGTH_SHORT).show();
             Log.d("log", "Excep inside savedDetails");
             e.printStackTrace();
         }
@@ -517,12 +562,13 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_PICK && resultCode == RESULT_OK) {
-            progressDialog.setTitle("Setting the stage");
+            progressDialog.setTitle("Setting the stage 1st wala");
             progressDialog.setMessage("Let the show begin...");
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
 
-            Uri imageUri = data.getData();
+            imageUri = data.getData();
+//            File path =
 //            if (null != imageUri) {
 //                Intent intent = CropImage.activity(imageUri)
 //                        .setGuidelines(CropImageView.Guidelines.ON)
@@ -530,7 +576,9 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
 //                        .getIntent(getApplicationContext());
 //                startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
 //            }
+            Bundle extras = data.getExtras();
             if(null != imageUri){
+                icardImageBitmap = (Bitmap) BitmapFactory.decodeFile(imageUri.toString());
                 upload.setText("Uploaded");
                 uploadClickable.setEnabled(false);
                 progressDialog.dismiss();
@@ -541,15 +589,19 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
             }
-        }
-
-        if(resultCode == RESULT_OK && requestCode == CAMERA_PICK){
+        } else if(resultCode == RESULT_OK && requestCode == CAMERA_PICK){
             progressDialog.setTitle("Setting the stage");
-            progressDialog.setMessage("Let the show begin.......");
+//            imageUriSelfie = data.getData();
+            progressDialog.setMessage("Uploading Selfie" + imageUriSelfie);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
-            Uri imageUri = data.getData();
-            if(null != imageUri){
+            Bundle extras = data.getExtras();
+
+
+//            Bitmap bitmap = BitmapFactory.decodeFile(pathToSelfie);
+//            imageUriSelfie = data.getData();
+            if(null != extras){
+                imageBitmap = (Bitmap) extras.get("data");
                 selfieText.setText("Taken");
                 progressDialog.dismiss();
             }else {
@@ -576,23 +628,36 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
     }
 
     private  void dispatchPictureTakenAction(){
+//        ContentValues values = new ContentValues();
+//        values.put(MediaStore.Images.Media.TITLE, "new image");
+//        values.put(MediaStore.Images.Media.DESCRIPTION, "From the camera");
+//        imageUriSelfie=getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         Intent takepic = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(takepic.resolveActivity(getPackageManager()) != null){
-            File photofile = null;
-            try {
-                photofile = createPhotoFile();
-                if(photofile != null){
-                    pathToSelfie = photofile.getAbsolutePath();
-                    startActivityForResult(takepic, CAMERA_PICK);
-                }
+//        takepic.putExtra(MediaStore.EXTRA_OUTPUT, imageUriSelfie);
 
-            }catch (Exception e){
-//                Log.d("myLogInsidePic", "Excep", e.toString());
-            }
+
+        if(takepic.resolveActivity(getPackageManager()) != null){
+            startActivityForResult(takepic, CAMERA_PICK);
+//            File photofile = null;
+//            try {
+//
+//                photofile = createPhotoFile();
+//                imageUriSelfie=Uri.fromFile(photofile);
+//                if(photofile != null){
+//                    pathToSelfie = photofile.getAbsolutePath();
+//                    Uri photoUri = FileProvider.getUriForFile(RegisterWithEmailActivity.this, "Asif", pathToSelfie);
+//                    takepic.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+//                    startActivityForResult(takepic, CAMERA_PICK);
+//                }
+//
+//            }catch (Exception e){
+////                Log.d("myLogInsidePic", "Excep", e.toString());
+//            }
         }
     }
 
     private File createPhotoFile(){
+
         String name = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = null;
