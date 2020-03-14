@@ -148,8 +148,10 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
         cities.add("Select Hostels");
         change.add("Select Type");
 
-        Button buttonNeedy = findViewById(R.id.btSignUpNeedy);
-        Button buttonVolunteer = findViewById(R.id.btSignUpVolunteer);
+//        Button buttonNeedy = findViewById(R.id.btSignUpNeedy);
+//        Button buttonVolunteer = findViewById(R.id.btSignUpVolunteer);
+        TextView buttonNeedy = findViewById(R.id.btSignUpNeedy);
+        TextView buttonVolunteer = findViewById(R.id.btSignUpVolunteer);
 
         buttonNeedy.setOnClickListener(new View.OnClickListener() {
             @Override
