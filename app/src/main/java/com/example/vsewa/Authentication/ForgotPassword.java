@@ -71,7 +71,7 @@ public class ForgotPassword extends AppCompatActivity {
                                         dialog.cancel();
 //
                                         Toast.makeText(ForgotPassword.this, "Please reset password using link sent to your email", Toast.LENGTH_SHORT).show();
-                                        Intent intent =new Intent(ForgotPassword.this,LoginWithEmailIdVolunteer.class);
+                                        Intent intent =new Intent(ForgotPassword.this,LoginWithEmailId.class);
                                         startActivity(intent);
                                     }
 //                            FirebaseAuth auth = FirebaseAuth.getInstance();

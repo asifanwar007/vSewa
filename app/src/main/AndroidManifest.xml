@@ -44,8 +44,7 @@
             android:label="title_activity_bottom_navigation" />
         <activity android:name=".Authentication.RegisterWithEmailActivity" />
         <activity android:name=".Authentication.ForgotPassword" />
-        <activity android:name=".Authentication.LoginWithEmailIdNeedy" />
-        <activity android:name=".Authentication.LoginWithEmailIdVolunteer" />
+        <activity android:name=".Authentication.LoginWithEmailId" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

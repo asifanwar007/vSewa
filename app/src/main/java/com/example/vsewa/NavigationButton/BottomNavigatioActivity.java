@@ -7,7 +7,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.vsewa.Authentication.LoginWithEmailIdVolunteer;
+import com.example.vsewa.Authentication.LoginWithEmailId;
 import com.example.vsewa.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +28,7 @@ public class BottomNavigatioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         user = FirebaseAuth.getInstance().getCurrentUser();
         if(user==null){
-            Intent intent=new Intent(this, LoginWithEmailIdVolunteer.class);
+            Intent intent=new Intent(this, LoginWithEmailId.class);
             startActivity(intent);
         }
         setContentView(R.layout.activity_bottom_navigatio);
@@ -47,7 +47,7 @@ public class BottomNavigatioActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         user = FirebaseAuth.getInstance().getCurrentUser();
         if(user==null){
-            Intent intent=new Intent(this, LoginWithEmailIdVolunteer.class);
+            Intent intent=new Intent(this, LoginWithEmailId.class);
             startActivity(intent);
         }
         MenuInflater menuInflater = getMenuInflater();
@@ -75,7 +75,7 @@ public class BottomNavigatioActivity extends AppCompatActivity {
 
     private void logOut() {
         FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(this, LoginWithEmailIdVolunteer.class);
+        Intent intent = new Intent(this, LoginWithEmailId.class);
         startActivity(intent);
     }
 

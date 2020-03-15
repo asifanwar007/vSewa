@@ -36,9 +36,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="SignUp here"
-        android:textStyle="bold"
+        android:text="SignUp"
         android:textAppearance="@android:style/TextAppearance.Medium"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
@@ -55,37 +55,15 @@
         app:layout_constraintTop_toBottomOf="@+id/tvWelcomeScreenSignUp" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/tvWelocmeScreenLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Login As"
+        android:text="Login"
+        android:textStyle="bold"
         android:textAppearance="@android:style/TextAppearance.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView13">
-
-        <Button
-            android:id="@+id/btVolunteer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Volunteer"
-            android:layout_marginRight="5dp"/>
-
-        <Button
-            android:id="@+id/btNeedy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Needy"
-            android:layout_marginLeft="5dp"/>
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

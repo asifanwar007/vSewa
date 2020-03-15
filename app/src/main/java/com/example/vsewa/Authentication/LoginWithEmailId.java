@@ -24,6 +24,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -33,13 +34,14 @@ import java.util.regex.Pattern;
 
 import am.appwise.components.ni.NoInternetDialog;
 
-public class LoginWithEmailIdNeedy extends AppCompatActivity {
+public class LoginWithEmailId extends AppCompatActivity {
     private EditText passwd;
     private TextInputEditText emailId;
+    private TextView switchTotv, switchTotvButton;
 
     private Button login;
     private FirebaseAuth mAuth;
-    private TextView signup, switchTotv, switchTotvButton;
+    private TextView signup;
     private TextView forgotPassword;
     ProgressDialog dialog;
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9#_~!$&'()*+,;=:.\"(),:;<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$";
@@ -55,11 +57,10 @@ public class LoginWithEmailIdNeedy extends AppCompatActivity {
         setContentView(R.layout.activity_login_with_email_id);
         noInternetDialog = new NoInternetDialog.Builder(this).build();
         noInternetDialog.show();
-
         switchTotv = findViewById(R.id.tvSwitchNeedyVolunteer);
-        switchTotvButton = findViewById(R.id.tvSwitchAtLoginPage);
-        switchTotv.setText("Needy");
-        switchTotvButton.setText("Volunteer");
+//        switchTotvButton = findViewById(R.id.tvSwitchAtLoginPage);
+        switchTotv.setText("vsewa");
+//        switchTotvButton.setText("Needy");
 
         emailId = findViewById(R.id.username);
         passwd= findViewById(R.id.password);
@@ -69,19 +70,18 @@ public class LoginWithEmailIdNeedy extends AppCompatActivity {
         dialog=new ProgressDialog(this);
         dialog.setMessage("Please wait,Logging in........");
 
-        switchTotvButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent loginNeedyIntent = new Intent(LoginWithEmailIdNeedy.this, LoginWithEmailIdVolunteer.class);
-                startActivity(loginNeedyIntent);
-
-            }
-        });
+//        switchTotvButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent loginNeedyIntent = new Intent(LoginWithEmailId.this, LoginWithEmailId.class);
+//                startActivity(loginNeedyIntent);
+//            }
+//        });
 
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent forgotPasswordIntent = new Intent(LoginWithEmailIdNeedy.this, ForgotPassword.class);
+                Intent forgotPasswordIntent = new Intent(LoginWithEmailId.this, ForgotPassword.class);
                 startActivity(forgotPasswordIntent);
                 finish();
             }
@@ -123,22 +123,25 @@ public class LoginWithEmailIdNeedy extends AppCompatActivity {
 
 
                     mAuth.signInWithEmailAndPassword(email_t, password_t)
-                            .addOnCompleteListener(LoginWithEmailIdNeedy.this, new OnCompleteListener<AuthResult>() {
+                            .addOnCompleteListener(LoginWithEmailId.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference();
-                                        String current_user =mAuth.getCurrentUser().getUid();
+                                        final DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference();
+                                        final String current_user =mAuth.getCurrentUser().getUid();
                                         String device_token= FirebaseInstanceId.getInstance().getToken();
-                                        databaseReference.child("Users").child("Needy").child(current_user).child("device_token").setValue(device_token).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        databaseReference.child("Users").child(current_user).child("device_token").setValue(device_token).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-
-                                                dialog.dismiss();
-                                                Intent i=new Intent(LoginWithEmailIdNeedy.this, BottomNavigatioActivity.class);
-                                                startActivity(i);
-                                                finish();
-
+                                                databaseReference.child("Users").child(current_user).child("isLoggedIn").setValue("yes").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        dialog.dismiss();
+                                                        Intent i=new Intent(LoginWithEmailId.this, BottomNavigatioActivity.class);
+                                                        startActivity(i);
+                                                        finish();
+                                                    }
+                                                });
                                             }
                                         });
                                         // Sign in success, update UI with the signed-in user's information
@@ -159,7 +162,7 @@ public class LoginWithEmailIdNeedy extends AppCompatActivity {
                                 dialog.dismiss();
                             } else {
                                 dialog.dismiss();
-                                Toast.makeText(LoginWithEmailIdNeedy.this, "Authentication failed",
+                                Toast.makeText(LoginWithEmailId.this, "Authentication failed",
                                         Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -167,7 +170,7 @@ public class LoginWithEmailIdNeedy extends AppCompatActivity {
                 }
                 else{
                     dialog.dismiss();
-                    Toast.makeText(LoginWithEmailIdNeedy.this, "Unknown error",
+                    Toast.makeText(LoginWithEmailId.this, "Unknown error",
                             Toast.LENGTH_SHORT).show();
                 }
 
@@ -180,7 +183,7 @@ public class LoginWithEmailIdNeedy extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(LoginWithEmailIdNeedy.this, RegisterWithEmailActivity.class);
+                Intent i=new Intent(LoginWithEmailId.this, RegisterWithEmailActivity.class);
                 startActivity(i);
 
             }
@@ -188,10 +191,17 @@ public class LoginWithEmailIdNeedy extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        updateUI(currentUser);
+    }
 
     @Override
     public void onBackPressed() {
-        moveTaskToBack(false);
+        moveTaskToBack(true);
 
     }
 

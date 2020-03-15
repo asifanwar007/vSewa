@@ -18,9 +18,8 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
 
-import com.example.vsewa.Authentication.LoginWithEmailIdVolunteer;
+import com.example.vsewa.Authentication.LoginWithEmailId;
 import com.example.vsewa.NavigationButton.BottomNavigatioActivity;
 import com.example.vsewa.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,7 +50,7 @@ public class volunteerRequiredDialogs extends AppCompatDialogFragment {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
         user= FirebaseAuth.getInstance().getCurrentUser();
         if(user==null){
-            Intent intent=new Intent(getContext(), LoginWithEmailIdVolunteer.class);
+            Intent intent=new Intent(getContext(), LoginWithEmailId.class);
             startActivity(intent);
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
