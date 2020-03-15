@@ -75,7 +75,7 @@ import am.appwise.components.ni.NoInternetDialog;
 public class RegisterWithEmailActivity extends AppCompatActivity {
     private TextInputLayout tpUserName,tpReferral;
     private EditText tpAge, tpPhoneNumber, tpEmail, tpFirstName, tpLastName, tpPassword;
-    private String email,password,phoneNumber,userName, firstName, lastName, gender,age,city, prefrences, pathToSelfie;
+    private String email,password,phoneNumber,userName, firstName, lastName, gender,age,city, pathToSelfie;
     private ImageButton icard, selfie;
     private TextView login,upload, selfieText, uploadClickable;
 
@@ -95,7 +95,7 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
     private final int GALLERY_PICK = 1, CAMERA_PICK=2;
     private Spinner tpCity, tpSwitchPrefrece;
     ArrayList<String> cities=new ArrayList<>();
-    ArrayList<String> change=new ArrayList<>();
+//    ArrayList<String> change=new ArrayList<>();
     private CheckBox checkBox;
     private ProgressDialog progressDialog;
     private NoInternetDialog noInternetDialog;
@@ -146,31 +146,33 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
 
         Button buttonSignUp=findViewById(R.id.btSignUp);
         cities.add("Select Hostels");
-        change.add("Select Type");
+//        change.add("Select Type");
 
-        Button buttonNeedy = findViewById(R.id.btSignUpNeedy);
-        Button buttonVolunteer = findViewById(R.id.btSignUpVolunteer);
+//        Button buttonNeedy = findViewById(R.id.btSignUpNeedy);
+//        Button buttonVolunteer = findViewById(R.id.btSignUpVolunteer);
+        TextView login = findViewById(R.id.btSignUpNeedy);
+//        TextView buttonVolunteer = findViewById(R.id.btSignUpVolunteer);
 
-        buttonNeedy.setOnClickListener(new View.OnClickListener() {
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent NeedyIntent = new Intent(RegisterWithEmailActivity.this, LoginWithEmailIdNeedy.class);
+                Intent NeedyIntent = new Intent(RegisterWithEmailActivity.this, LoginWithEmailId.class);
                 startActivity(NeedyIntent);
                 finish();
             }
         });
 
-        buttonVolunteer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent volunteerIntent = new Intent(RegisterWithEmailActivity.this, LoginWithEmailIdVolunteer.class);
-                startActivity(volunteerIntent);
-                finish();
-            }
-        });
+//        buttonVolunteer.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent volunteerIntent = new Intent(RegisterWithEmailActivity.this, LoginWithEmailId.class);
+//                startActivity(volunteerIntent);
+//                finish();
+//            }
+//        });
 
         tpCity = findViewById(R.id.spinnerCity);
-        tpSwitchPrefrece = findViewById(R.id.spinnerSwitch);
+//        tpSwitchPrefrece = findViewById(R.id.spinnerSwitch);
         databaseRef.child("Location").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -202,38 +204,38 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
             }
         });
 
-        databaseRef.child("Prefrences").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot data:dataSnapshot.getChildren()){
-                    change.add((String) data.getValue());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                change.add("Data ref cancelled");
-            }
-        });
-        ArrayAdapter<String> SwitchPrefrecesAdapter = new ArrayAdapter<>(
-                RegisterWithEmailActivity.this,
-                android.R.layout.simple_spinner_dropdown_item,
-                change);
-        SwitchPrefrecesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        tpSwitchPrefrece.setAdapter(SwitchPrefrecesAdapter);
-
-        tpSwitchPrefrece.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                prefrences = change.get(i);
-                tpSwitchPrefrece.setSelection(i);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
+//        databaseRef.child("Prefrences").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                for(DataSnapshot data:dataSnapshot.getChildren()){
+//                    change.add((String) data.getValue());
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                change.add("Data ref cancelled");
+//            }
+//        });
+//        ArrayAdapter<String> SwitchPrefrecesAdapter = new ArrayAdapter<>(
+//                RegisterWithEmailActivity.this,
+//                android.R.layout.simple_spinner_dropdown_item,
+//                change);
+//        SwitchPrefrecesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        tpSwitchPrefrece.setAdapter(SwitchPrefrecesAdapter);
+//
+//        tpSwitchPrefrece.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                prefrences = change.get(i);
+//                tpSwitchPrefrece.setSelection(i);
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
 
 
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
@@ -315,45 +317,40 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
                                             progressDialog.dismiss();
                                         } else {
                                             progressDialog.show();
-                                            if (prefrences == null || prefrences.equals("Select Type")) {
-                                                Toast.makeText(RegisterWithEmailActivity.this, "Select Prefrence", Toast.LENGTH_SHORT).show();
-                                                progressDialog.dismiss();
-                                            } else {
-                                                if(upload.getText().toString().equals("Uploaded")){
-                                                    if(checkBox.isChecked()){
-                                                        progressDialog.setMessage("Progress Dialog Checked");
-                                                        mAuth.createUserWithEmailAndPassword(email, password)
-                                                                .addOnCompleteListener(RegisterWithEmailActivity.this, new OnCompleteListener<AuthResult>() {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                                                        if(task.isSuccessful()){
-                                                                            progressDialog.setMessage("Hello brother");
-                                                                            user = mAuth.getCurrentUser();
-                                                                            savedDetails();
-                                                                        }else {
-                                                                            Toast.makeText(RegisterWithEmailActivity.this, "Mail appears to be existing, please try with another mail", Toast.LENGTH_SHORT).show();
-                                                                            tpEmail.setEnabled(true);
+                                            if(upload.getText().toString().equals("Uploaded")){
+                                                if(checkBox.isChecked()){
+                                                    progressDialog.setMessage("Progress Dialog Checked");
+                                                    mAuth.createUserWithEmailAndPassword(email, password)
+                                                            .addOnCompleteListener(RegisterWithEmailActivity.this, new OnCompleteListener<AuthResult>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                                                    if(task.isSuccessful()){
+                                                                        progressDialog.setMessage("Hello brother");
+                                                                        user = mAuth.getCurrentUser();
+                                                                        savedDetails();
+                                                                    }else {
+                                                                        Toast.makeText(RegisterWithEmailActivity.this, "Mail appears to be existing, please try with another mail", Toast.LENGTH_SHORT).show();
+                                                                        tpEmail.setEnabled(true);
 //                                                                            tpUserName.setEnabled(true);
-                                                                            tpPhoneNumber.setEnabled(true);
-                                                                            tpPassword.setEnabled(true);
-                                                                            tpAge.setEnabled(true);
+                                                                        tpPhoneNumber.setEnabled(true);
+                                                                        tpPassword.setEnabled(true);
+                                                                        tpAge.setEnabled(true);
 //                                                                            tpReferral.setEnabled(true);
-                                                                            tpCity.setEnabled(true);
-                                                                            checkBox.setEnabled(true);
-                                                                            radioGroup.setEnabled(true);
-                                                                            progressDialog.dismiss();
+                                                                        tpCity.setEnabled(true);
+                                                                        checkBox.setEnabled(true);
+                                                                        radioGroup.setEnabled(true);
+                                                                        progressDialog.dismiss();
 
 
-                                                                        }
                                                                     }
-                                                                });
-                                                    }else{
-                                                        Toast.makeText(RegisterWithEmailActivity.this, "Please accept Terms and Conditions", Toast.LENGTH_SHORT).show();
-                                                    }
+                                                                }
+                                                            });
                                                 }else{
-                                                    Toast.makeText(RegisterWithEmailActivity.this, "Please upload Id Proof", Toast.LENGTH_SHORT).show();
-                                                    progressDialog.dismiss();
+                                                    Toast.makeText(RegisterWithEmailActivity.this, "Please accept Terms and Conditions", Toast.LENGTH_SHORT).show();
                                                 }
+                                            }else{
+                                                Toast.makeText(RegisterWithEmailActivity.this, "Please upload Id Proof", Toast.LENGTH_SHORT).show();
+                                                progressDialog.dismiss();
                                             }
                                         }
                                     }
@@ -370,15 +367,6 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
                 } else {
                     gender = "Others";
                 }
-
-
-
-
-
-
-
-
-
             }
         });
         icard.setOnClickListener(new View.OnClickListener() {
@@ -406,7 +394,7 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
     }
 
     private void savedDetails(){
-        progressDialog.setMessage("inside save details");
+//        progressDialog.setMessage("inside save details");
         try{
 
 //            BitmapDrawable bitmapDrawable = ((BitmapDrawable) imageView.getDrawable());
@@ -415,7 +403,7 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             final byte[] imageInByte = stream.toByteArray();
-            final StorageReference Ref = mStorageRef.child(prefrences).child(user.getUid()).child(currentTimeStamp + "_selfie");
+            final StorageReference Ref = mStorageRef.child("Users").child(user.getUid()).child(currentTimeStamp + "_selfie");
             Task<Uri> uriTask = Ref.putBytes(imageInByte).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -435,7 +423,7 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
 //                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
 //                                icardImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 //                                final byte[] imageInByte = stream.toByteArray();
-                                final StorageReference Ref1 = mStorageRef.child(prefrences).child(user.getUid()).child(currentTimeStamp + "_id");
+                                final StorageReference Ref1 = mStorageRef.child("Users").child(user.getUid()).child(currentTimeStamp + "_id");
 //                                Ref1.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 //                                    @Override
 //                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -474,7 +462,7 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
                                                     userDetails.put("email", email);
                                                     userDetails.put("fullName", userName);
                                                     userDetails.put("phoneNumber", phoneNumber);
-                                                    userDetails.put("city", city);
+                                                    userDetails.put("Hostels", city);
                                                     userDetails.put("Age", age);
                                                     userDetails.put("gender", gender);
                                                     userDetails.put("noOfLogin", 0);
@@ -492,7 +480,7 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
                                                     progressDialog.setMessage("selfie ke pass");
                                                     userDetails.put("selfie", imageUriSelfie.toString());
                                                     progressDialog.setMessage("Setting Database");
-                                                    DatabaseReference usersRef = databaseRef.child("Users").child(prefrences).child(user.getUid());
+                                                    DatabaseReference usersRef = databaseRef.child("Users").child(user.getUid());
                                                     usersRef.setValue(userDetails).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
@@ -502,8 +490,9 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
                                                                         public void onComplete(@NonNull Task<Void> task) {
                                                                             if (task.isSuccessful()) {
                                                                                 progressDialog.setMessage("User invitation send");
+                                                                                Log.d("email sent", "Email sent to the respective user");
 //                                                                                Toast.makeText(RegisterWithEmailActivity.this, "Please Confirm your Email First", Toast.LENGTH_LONG).show();
-                                                                                Intent intent = new Intent(RegisterWithEmailActivity.this, LoginWithEmailIdVolunteer.class);
+                                                                                Intent intent = new Intent(RegisterWithEmailActivity.this, LoginWithEmailId.class);
                                                                                 startActivity(intent);
                                                                                 finish();
                                                                                 progressDialog.dismiss();
