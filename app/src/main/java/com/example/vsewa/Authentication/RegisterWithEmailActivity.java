@@ -658,4 +658,15 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
         return image;
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        noInternetDialog.onDestroy();
+    }
 }
