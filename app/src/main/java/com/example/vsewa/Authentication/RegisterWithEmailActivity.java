@@ -476,7 +476,7 @@ public class RegisterWithEmailActivity extends AppCompatActivity {
                                                     userDetails.put("dateOfJoining", date);
                                                     userDetails.put("isLoggedIn", "no");
                                                     progressDialog.setMessage("Id proof ke pass");
-                                                    userDetails.put("id_proof", imageUriSelfie.toString());
+                                                    userDetails.put("id_proof", imageUri.toString());
                                                     progressDialog.setMessage("selfie ke pass");
                                                     userDetails.put("selfie", imageUriSelfie.toString());
                                                     progressDialog.setMessage("Setting Database");

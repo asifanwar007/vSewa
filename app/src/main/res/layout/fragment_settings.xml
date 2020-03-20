@@ -96,14 +96,34 @@
                 android:textSize="18sp" />
         </RelativeLayout>
         <LinearLayout
+            android:id="@+id/linearLayoutListView"
             android:layout_width="match_parent"
             android:layout_height="500dp"
+            android:orientation="vertical"
             android:layout_below="@id/profile_layout">
 
             <ListView
                 android:id="@+id/listviewProfile"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linearLayoutListView"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="ICard"
+                android:textAppearance="@android:style/TextAppearance.Medium" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageviewIdCard"/>
 
         </LinearLayout>
 
