@@ -2,6 +2,7 @@ package com.example.vsewa.NavigationButton.ui.settings;
 
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,13 +49,15 @@ public class SettingsFragment extends Fragment {
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private FirebaseUser user;
-    private String name, city, hostel,profilePicLink;
+    private String name, city, hostel,profilePicLink, IcardLink;
     private Uri profilePic;
 
     private CircleImageView circleProfileView;
+    private ImageView imageViewIdCard;
     private TextView tvname, tvhostel, tvcity;
 
     private NoInternetDialog noInternetDialog;
+    private ProgressDialog progressDialog;
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -64,6 +68,10 @@ public class SettingsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         noInternetDialog = new NoInternetDialog.Builder(this).build();
         noInternetDialog.show();
+        progressDialog=new ProgressDialog(getContext());
+        progressDialog.setMessage("Please wait....");
+        progressDialog.setTitle("Getting all details");
+        progressDialog.setCancelable(false);
         mViewModel =
                 ViewModelProviders.of(this).get(SettingsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_settings, container, false);
@@ -74,6 +82,7 @@ public class SettingsFragment extends Fragment {
 //                textView.setText(s);
 //            }
 //        });
+        progressDialog.show();
         user = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
         listView = root.findViewById(R.id.listviewProfile);
@@ -106,23 +115,32 @@ public class SettingsFragment extends Fragment {
         tvhostel = root.findViewById(R.id.designation);
         tvcity = root.findViewById(R.id.location);
         circleProfileView = root.findViewById(R.id.profile);
+        imageViewIdCard = root.findViewById(R.id.imageviewIdCard);
 
         storageReference = FirebaseStorage.getInstance().getReference().child("Image").child("Users").child(user.getUid());
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
         databaseReference.child(user.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                progressDialog.show();
                 name = ((String) dataSnapshot.child("fullName").getValue()).toUpperCase();
                 hostel = (String) dataSnapshot.child("Hostels").getValue();
                 profilePic = Uri.parse((String) dataSnapshot.child("selfie").getValue());
                 profilePicLink = (String) dataSnapshot.child("selfie").getValue();
+                IcardLink = (String) dataSnapshot.child("id_proof").getValue();
                 tvname.setText(name);
                 tvhostel.setText(hostel);
+                Log.i("hello", IcardLink);
 //                circleProfileView.setImageURI(profilePic);
-                Glide.with(getContext())
+                Glide.with(SettingsFragment.this)
 //                        .using(new FirebaseImageLoader())
                         .load(profilePicLink)
                         .into(circleProfileView);
+                Glide.with(SettingsFragment.this)
+//                        .using(new FirebaseImageLoader())
+                        .load(IcardLink)
+                        .into(imageViewIdCard);
+                progressDialog.dismiss();
 
             }
 
