@@ -1,5 +1,6 @@
 package com.example.vsewa.NavigationButton.ui.settings;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.ProgressDialog;
@@ -41,21 +42,16 @@ import java.util.ArrayList;
 import am.appwise.components.ni.NoInternetDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SettingsFragment extends Fragment {
+public class  SettingsFragment extends Fragment {
 
     private SettingsViewModel mViewModel;
     private ListView listView;
     private ArrayList<String> listViewArray;
-    private DatabaseReference databaseReference;
-    private StorageReference storageReference;
-    private FirebaseUser user;
-    private String name, city, hostel,profilePicLink, IcardLink;
-    private Uri profilePic;
-
     private CircleImageView circleProfileView;
     private ImageView imageViewIdCard;
     private TextView tvname, tvhostel, tvcity;
 
+    private FirebaseUser user;
     private NoInternetDialog noInternetDialog;
     private ProgressDialog progressDialog;
 
@@ -72,26 +68,61 @@ public class SettingsFragment extends Fragment {
         progressDialog.setMessage("Please wait....");
         progressDialog.setTitle("Getting all details");
         progressDialog.setCancelable(false);
+        progressDialog.show();
         mViewModel =
                 ViewModelProviders.of(this).get(SettingsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_settings, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
-//        mViewModel.getText().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
-        progressDialog.show();
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
+
+        user = mViewModel.getUser();
+        tvname = root.findViewById(R.id.name);
+        tvhostel = root.findViewById(R.id.designation);
+        tvcity = root.findViewById(R.id.location);
+        circleProfileView = root.findViewById(R.id.profile);
+        imageViewIdCard = root.findViewById(R.id.imageviewIdCard);
+        mViewModel.getName().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                tvname.setText(s);
+            }
+        });
+        mViewModel.getHostel().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                tvhostel.setText(s);
+            }
+        });
+        mViewModel.getIcardLink().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                try {
+                    Glide.with(SettingsFragment.this)
+//                        .using(new FirebaseImageLoader())
+                        .load(s)
+                        .into(imageViewIdCard);
+                progressDialog.dismiss();
+                }catch (Exception e){
+                    Log.d("tag", "Exception");
+                    progressDialog.dismiss();
+                }
+            }
+        });
+        mViewModel.getProfilePicLink().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                try {
+                    Glide.with(SettingsFragment.this)
+//                        .using(new FirebaseImageLoader())
+                            .load(s)
+                            .into(circleProfileView);
+                    progressDialog.dismiss();
+                }catch (Exception e){
+                    Log.d("tag", "Exception");
+                    progressDialog.dismiss();
+                }
+            }
+        });
         listView = root.findViewById(R.id.listviewProfile);
-        listViewArray = new ArrayList<>();
-        listViewArray.add("Profile");
-        listViewArray.add("Account");
-        listViewArray.add("Sign Out");
-
-
+        listViewArray = mViewModel.getListViewArray();
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, listViewArray);
         listView.setAdapter(arrayAdapter);
 
@@ -102,7 +133,6 @@ public class SettingsFragment extends Fragment {
                     FirebaseAuth.getInstance().signOut();
                     Intent intent = new Intent(getContext(), LoginWithEmailId.class);
                     startActivity(intent);
-
                 } else if (listViewArray.get(i).equals("Profile")){
                     Toast.makeText(getContext(), "Haven't set yet : " + listViewArray.get(i), Toast.LENGTH_SHORT).show();
                 }else {
@@ -111,55 +141,6 @@ public class SettingsFragment extends Fragment {
 
             }
         });
-        tvname = root.findViewById(R.id.name);
-        tvhostel = root.findViewById(R.id.designation);
-        tvcity = root.findViewById(R.id.location);
-        circleProfileView = root.findViewById(R.id.profile);
-        imageViewIdCard = root.findViewById(R.id.imageviewIdCard);
-
-        storageReference = FirebaseStorage.getInstance().getReference().child("Image").child("Users").child(user.getUid());
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
-        databaseReference.child(user.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                progressDialog.show();
-                name = ((String) dataSnapshot.child("fullName").getValue()).toUpperCase();
-                hostel = (String) dataSnapshot.child("Hostels").getValue();
-                profilePic = Uri.parse((String) dataSnapshot.child("selfie").getValue());
-                profilePicLink = (String) dataSnapshot.child("selfie").getValue();
-                IcardLink = (String) dataSnapshot.child("id_proof").getValue();
-                tvname.setText(name);
-                tvhostel.setText(hostel);
-                Log.i("hello", IcardLink);
-//                circleProfileView.setImageURI(profilePic);
-                Glide.with(SettingsFragment.this)
-//                        .using(new FirebaseImageLoader())
-                        .load(profilePicLink)
-                        .into(circleProfileView);
-                Glide.with(SettingsFragment.this)
-//                        .using(new FirebaseImageLoader())
-                        .load(IcardLink)
-                        .into(imageViewIdCard);
-                progressDialog.dismiss();
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("log1", "Unable to retrieve name");
-
-            }
-        });
-        Log.d("log2", name +" " + hostel);
-
-
-
-
-
-
         return root;
     }
-
-
-
 }

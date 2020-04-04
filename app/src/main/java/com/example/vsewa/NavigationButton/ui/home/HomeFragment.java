@@ -97,7 +97,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        user = homeViewModel.getUser();
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         progressDialog=new ProgressDialog(getContext());
