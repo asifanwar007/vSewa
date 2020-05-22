@@ -28,6 +28,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
@@ -73,18 +74,23 @@ public class HomeFragment extends Fragment {
     private TextView tvLocationVolunteer, tvLocationRequired;
 
     private ProgressDialog progressDialog;
-
     private DatabaseReference databaseReference, databaseReference1, databaseReference2;
     private GeoFire geoFire;
     private FirebaseUser user;
     private String gender;
-
+    private Bundle savedState;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private Object App;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            //Restore the fragment's instance
+//            mMyFragment = getSupportFragmentManager().getFragment(savedInstanceState, "myFragmentName");
+
+        }
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
@@ -116,30 +122,19 @@ public class HomeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 progressDialog.show();
                 if(b){
-                    if(mLocationPermissionGranted != true){
-                        progressDialog.dismiss();
-                        getLocationPermission();
-                        if(mLocationPermissionGranted != true){
-                            Toast.makeText(getContext(), "Volunteering Mode OFF", Toast.LENGTH_SHORT).show();
-                            volunteerSwitch.setChecked(false);
-                            tvLocationVolunteer.setText("Please Allow Location to Proceeds Further");
-                            tvLocationVolunteer.setTextColor(Color.RED);
-                            tvLocationVolunteer.setVisibility(View.VISIBLE);
-                        }else{
-                            progressDialog.show();
-                            volunteerSwitch.setChecked(true);
-                            tvLocationVolunteer.setText("Location Access Granted!!");
-                            tvLocationVolunteer.setTextColor(Color.GREEN);
-                            tvLocationVolunteer.setVisibility(View.VISIBLE);
-                            Toast.makeText(getContext(), "Volunteering Mode On", Toast.LENGTH_SHORT).show();
-                            saveLocation();
-                        }
-                    }else {
+                    if (ContextCompat.checkSelfPermission(getActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED){
                         progressDialog.show();
                         Toast.makeText(getContext(), "Volunteering Mode On", Toast.LENGTH_SHORT).show();
                         saveLocation();
+                        volunteerSwitch.setChecked(true);
+                    }else{
+                        progressDialog.dismiss();
+                        getLocationPermission();
+                        Toast.makeText(getContext(), "Please Allow location first", Toast.LENGTH_SHORT).show();
+                        volunteerSwitch.setChecked(false);
                     }
-
                 }else{
                     progressDialog.show();
                     Toast.makeText(getContext(), "Volunteering Mode OFF", Toast.LENGTH_SHORT).show();
@@ -154,14 +149,17 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 progressDialog.show();
-                if(mLocationPermissionGranted == true){
+                if(volunteerSwitch.isChecked()){
+                    Toast.makeText(getContext(), "Please Turn Off Volunteering Mode", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                }else if (ContextCompat.checkSelfPermission(getActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED){
                     if(locationManager != null){
                         locationManager.removeUpdates(locationListener);
                         DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference().child("VolunteerOn").child(user.getUid());
                         databaseReference3.removeValue();
                     }
-
-                    progressDialog.dismiss();
                     Intent intent = new Intent(getContext(), NeedyMapsActivity.class);
                     startActivity(intent);
                     progressDialog.dismiss();
@@ -175,8 +173,6 @@ public class HomeFragment extends Fragment {
 
             }
         });
-
-
         return root;
     }
 
@@ -186,8 +182,6 @@ public class HomeFragment extends Fragment {
         databaseReference3.removeValue();
         progressDialog.dismiss();
     }
-
-
 
     private void saveLocation() {
         getDeviceLocation();
@@ -357,4 +351,25 @@ public class HomeFragment extends Fragment {
         }
     }
 
+     private Bundle saveState() { /* called either from onDestroyView() or onSaveInstanceState() */
+        Bundle state = new Bundle();
+        state.putBoolean("SWITCH", volunteerSwitch.isChecked());
+        return state;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        /* If onDestroyView() is called first, we can use the previously savedState but we can't call saveState() anymore */
+        /* If onSaveInstanceState() is called first, we don't have savedState, so we need to call saveState() */
+        /* => (?:) operator inevitable! */
+        outState.putBundle("SWITCHSTATE", (savedState != null) ? savedState : saveState());
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        savedState = saveState();
+//        createdStateInDestroyView = true;
+//        myObject = null;
+    }
 }

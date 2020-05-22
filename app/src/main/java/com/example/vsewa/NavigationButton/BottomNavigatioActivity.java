@@ -77,6 +77,11 @@ public class BottomNavigatioActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, LoginWithEmailId.class);
         startActivity(intent);
+        finish();
+    }
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 
 }
