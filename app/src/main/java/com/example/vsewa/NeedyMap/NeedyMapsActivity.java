@@ -28,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.vsewa.Dialogs.volunteerRequiredDialogs;
+import com.example.vsewa.NavigationButton.BottomNavigatioActivity;
 import com.example.vsewa.NavigationButton.ui.home.HomeFragment;
 import com.example.vsewa.R;
 import com.firebase.geofire.GeoFire;
@@ -163,7 +164,7 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
             @Override
             public void onClick(View view) {
                 deleteLocation();
-                Intent intent = new Intent(NeedyMapsActivity.this, HomeFragment.class);
+                Intent intent = new Intent(NeedyMapsActivity.this, BottomNavigatioActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -173,7 +174,7 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
             @Override
             public void onClick(View view) {
                 deleteLocation();
-                Intent intent = new Intent(NeedyMapsActivity.this, HomeFragment.class);
+                Intent intent = new Intent(NeedyMapsActivity.this, BottomNavigatioActivity.class);
                 startActivity(intent);
                 finish();
             }
