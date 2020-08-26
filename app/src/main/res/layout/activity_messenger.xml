@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.vsewa.Messenger.MessengerActivity">
+
+    <TextView android:id="@+id/textbox"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/editText"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:gravity="bottom"
+    android:hint="@string/chat_message_will_appear_here"
+    android:textAlignment="gravity"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="parent "/>
+
+    <EditText android:id="@+id/editText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toStartOf="@+id/sendButton"
+    android:ems="10"
+    android:hint="@string/type_here"
+    android:inputType="textPersonName"
+        android:autofillHints="" />
+
+    <Button android:id="@+id/sendButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBottom="@+id/editText"
+    android:layout_alignParentEnd="true"
+    android:onClick="sendMessage"
+    android:text="@string/send"/>
+    </RelativeLayout>
