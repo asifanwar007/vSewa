@@ -182,8 +182,8 @@ public class HomeFragment extends Fragment {
 
     private void deleteLocation() {
         locationManager.removeUpdates(locationListener);
-        DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference().child("VolunteerOn").child(user.getUid());
-        databaseReference3.removeValue();
+        FirebaseDatabase.getInstance().getReference().child("VolunteerOn").child(user.getUid()).removeValue();
+        FirebaseDatabase.getInstance().getReference().child("GeoFire").child("VolunteerOn").child(user.getUid()).removeValue();
         progressDialog.dismiss();
     }
 

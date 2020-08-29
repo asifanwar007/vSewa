@@ -12,8 +12,8 @@
     <string name="title_activity_login_with_email">Sign in</string>
     <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notification</string>
+    <string name="title_dashboard">Volunteer List</string>
+    <string name="title_notifications">Needy List</string>
     <string name="title_activity_maps">Map</string>
     <string name="logout">logout</string>
     <string name="title_profile">Profile</string>

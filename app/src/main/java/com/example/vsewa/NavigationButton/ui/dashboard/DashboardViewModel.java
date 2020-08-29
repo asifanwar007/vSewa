@@ -30,7 +30,7 @@ public class DashboardViewModel extends ViewModel {
         mDataset = new MutableLiveData<>();
         ar = new ArrayList<>();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("VolunteerOn");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("GeoFire").child("VolunteerOn");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {

@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.vsewa.NavigationButton.ui.settings.SettingsFragment;
 import com.example.vsewa.R;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -31,6 +33,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
             txtName = (TextView) convertView.findViewById(R.id.name);
             txtAgeGender = (TextView) convertView.findViewById(R.id.itemCheckAge);
             txtAddress = (TextView) convertView.findViewById(R.id.itemCheckAddr);
+            info = (ImageView) convertView.findViewById(R.id.itemCheckImage);
         }
     }
 
@@ -78,7 +81,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
             viewHolder.txtName = (TextView) convertView.findViewById(R.id.itemCheckName);
             viewHolder.txtAgeGender = (TextView) convertView.findViewById(R.id.itemCheckAge);
             viewHolder.txtAddress = (TextView) convertView.findViewById(R.id.itemCheckAddr);
-//            viewHolder.info = (ImageView) convertView.findViewById(R.id.item_info);
+            viewHolder.info = (ImageView) convertView.findViewById(R.id.itemCheckImage);
 
             result=convertView;
 
@@ -96,6 +99,10 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         viewHolder.txtName.setText(dataModel.getName());
         viewHolder.txtAgeGender.setText(dataModel.getAge() + ", " + dataModel.getGender());
         viewHolder.txtAddress.setText(dataModel.getAddress());
+        Glide.with(mContext)
+//                        .using(new FirebaseImageLoader())
+                .load(dataModel.getImageLink())
+                .into(viewHolder.info);
 //        viewHolder.info.setOnClickListener(this);
 //        viewHolder.info.setTag(position);
         // Return the completed view to render on screen
