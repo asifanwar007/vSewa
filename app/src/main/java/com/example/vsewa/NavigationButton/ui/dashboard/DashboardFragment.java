@@ -33,7 +33,7 @@ public class DashboardFragment extends Fragment implements volunteerRequiredDial
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<String> myDataset;
+    private ArrayList<DataModel> myDataset;
     private ListView listView;
 
 
@@ -59,24 +59,39 @@ public class DashboardFragment extends Fragment implements volunteerRequiredDial
 //        tvNumberVolunteer.setText(noOfVolunteerRequired + "");
         listView = root.findViewById(R.id.listViewVolun);
         myDataset = new ArrayList<>();
-        myDataset.add("No value1");
-        myDataset.add("value1");
-        dashboardViewModel.getData().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
-            @Override
-            public void onChanged(ArrayList<String> strings) {
-                if(strings != null) {
-                    myDataset = strings;
-                    Log.d("TAG1--", myDataset.get(0));
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, myDataset);
+       dashboardViewModel.getData().observe(getViewLifecycleOwner(), new Observer<ArrayList<DataModel>>() {
+           @Override
+           public void onChanged(ArrayList<DataModel> dataModels) {
+               myDataset = dataModels;
+                if(dataModels != null) {
+//                    listView.removeAllViews();
+                    ArrayAdapter<DataModel> arrayAdapter = new CustomAdapter(dataModels, getContext());
                     listView.setAdapter(arrayAdapter);
-                }else{
-                    myDataset.add("No Value");
-                    myDataset.add("Asif");
-                    myDataset.add("Dummy Values 1");
-                    Log.d("TAG2--", myDataset.get(0));
+                }else {
+                    ArrayList<String> ar = new ArrayList<>();
+                    ar.add("No Value");
+                    ar.add("No Value");
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ar);
+                    listView.setAdapter(arrayAdapter);
                 }
-            }
-        });
+           }
+       });
+//        dashboardViewModel.getData().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
+//            @Override
+//            public void onChanged(ArrayList<String> strings) {
+//                if(strings != null) {
+//                    myDataset = strings;
+//                    Log.d("TAG1--", myDataset.get(0));
+//                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, myDataset);
+//                    listView.setAdapter(arrayAdapter);
+//                }else{
+//                    myDataset.add("No Value");
+//                    myDataset.add("Asif");
+//                    myDataset.add("Dummy Values 1");
+//                    Log.d("TAG2--", myDataset.get(0));
+//                }
+//            }
+//        });
 //        myDataset = dashboardViewModel.getData1();
 
 //        recyclerView = (RecyclerView) root.findViewById(R.id.recyclerView);

@@ -20,27 +20,50 @@ import java.util.Map;
 
 public class DashboardViewModel extends ViewModel {
 
-    private MutableLiveData<ArrayList<String>> mDataset;
-    private ArrayList<String> ar, mListViewArray;
+    private MutableLiveData<ArrayList<DataModel>> mDataset;
+    private ArrayList<DataModel> ar, mListViewArray;
     private DatabaseReference databaseReference;
     private FirebaseUser mUser;
 
 
     public DashboardViewModel() {
         mDataset = new MutableLiveData<>();
-        ar = new ArrayList<String>();
+        ar = new ArrayList<>();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("VolunteerOn");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot1) {
 //                Map<String, Object> td = (HashMap<String,Object>) dataSnapshot.getValue();
 //                List<Object> ar = td.values();
 //                ar = new ArrayList<String>();
-                for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
+                for (final DataSnapshot childDataSnapshot : dataSnapshot1.getChildren()) {
 //                    Log.v(TAG,""+ childDataSnapshot.getKey()); //displays the key for the node
 //                    Log.v(TAG,""+ childDataSnapshot.child(--ENTER THE KEY NAME eg. firstname or email etc.--).getValue());   //gives the value for given keynamem
-                    ar.add(childDataSnapshot.getKey()) ;
+
+//                    ar.add(childDataSnapshot.getKey()) ;
+                    DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("Users").child(childDataSnapshot.getKey());
+                    db.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String name = (String) dataSnapshot.child("fullName").getValue();
+                            String addr = (String) dataSnapshot.child("Hostels").getValue();
+                            String age = (String) dataSnapshot.child("Age").getValue();
+                            String imglink = (String) dataSnapshot.child("selfie").getValue();
+                            String gender = (String) dataSnapshot.child("gender").getValue();
+                            String uid = (String) childDataSnapshot.getKey();
+                            DataModel dataModel = new DataModel(name, age, uid, addr, gender, imglink);
+                            ar.add(dataModel);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+
                 }
                 mDataset.postValue(ar);
             }
@@ -56,12 +79,12 @@ public class DashboardViewModel extends ViewModel {
         return mUser;
     }
 
-    public LiveData<ArrayList<String>> getData(){
+    public LiveData<ArrayList<DataModel>> getData(){
         return mDataset;
 
     }
-    public ArrayList<String> getData1(){
-        return ar;
-    }
+//    public ArrayList<String> getData1(){
+//        return ar;
+//    }
 
 }
