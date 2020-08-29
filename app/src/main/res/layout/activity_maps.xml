@@ -30,29 +30,28 @@
 <!--        </androidx.cardview.widget.CardView>-->
 
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="0dp"
-            android:background="?attr/colorPrimaryDark"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            android:visibility="invisible"
-            tools:layout_editor_absoluteX="0dp"/>
+<!--        <androidx.appcompat.widget.Toolbar-->
+<!--            android:id="@+id/toolbar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginEnd="0dp"-->
+<!--            android:background="?attr/colorPrimaryDark"-->
+<!--            android:minHeight="?attr/actionBarSize"-->
+<!--            android:theme="?attr/actionBarTheme"-->
+<!--            android:visibility="invisible"-->
+<!--            tools:layout_editor_absoluteX="0dp"/>-->
         <EditText
             android:id="@+id/currentLocation"
-            android:layout_below="@id/toolbar"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:layout_marginLeft="30dp"
-            android:hint="Enter Your Location"
+            android:layout_marginStart="30dp"
+            android:hint="Enter Radius in KM"
             android:visibility="visible"
             android:drawableStart="@drawable/ic_home"
-            android:drawablePadding="30dp"
-            android:layout_marginTop="30dp"/>
+            android:inputType="number"
+            android:drawablePadding="20dp"
+            android:layout_marginTop="10dp"/>
 
 <!--        <com.google.android.material.textfield.TextInputLayout-->
 <!--            android:id="@+id/currentLocation"-->
@@ -79,8 +78,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Request"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="30dp"
             android:layout_marginTop="5dp"
             android:layout_below="@id/currentLocation"/>
         <TextView
@@ -102,24 +101,24 @@
             android:visibility="invisible"
             android:text="Cancel" />
 
-        <ImageButton
-            android:id="@+id/imageButtonLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_mylocation"
-            android:layout_above="@id/tvSearching"
-            android:visibility="visible"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="10dp"/>
+<!--        <ImageButton-->
+<!--            android:id="@+id/imageButtonLocation"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@android:drawable/ic_menu_mylocation"-->
+<!--            android:layout_above="@id/tvSearching"-->
+<!--            android:visibility="visible"-->
+<!--            android:layout_alignParentRight="true"-->
+<!--            android:layout_marginEnd="10dp"/>-->
 
         <Button
             android:id="@+id/btnCancel1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/currentLocation"
-            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
-            android:layout_toStartOf="@+id/btnRequest"
+            android:layout_toEndOf="@+id/btnRequest"
             android:text="Cancel" />
 
 

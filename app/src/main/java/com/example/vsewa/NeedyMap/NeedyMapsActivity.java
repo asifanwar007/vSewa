@@ -16,6 +16,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vsewa.Dialogs.volunteerRequiredDialogs;
 import com.example.vsewa.NavigationButton.BottomNavigatioActivity;
@@ -107,7 +109,7 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
     private LatLng[] mLikelyPlaceLatLngs;
     private volunteerRequiredDialogs reasonDialog;
     private String volunteerGender, reasonRequired;
-    private int noOfVolunteerRequired;
+    private int noOfVolunteerRequired, raduis;
 
     private Button btnRequest, btnCancelRequest, btnCancel;
     private ImageButton currentLocationButton;
@@ -122,6 +124,7 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
     private LocationManager locationManager;
     private LocationListener locationListener;
     private GeoFire geoFire, geoFire1;
+
 
 
 
@@ -150,7 +153,7 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
 
         btnRequest = findViewById(R.id.btnRequest);
         btnCancelRequest = findViewById(R.id.btnCancel);
-        currentLocationButton = findViewById(R.id.imageButtonLocation);
+//        currentLocationButton = findViewById(R.id.imageButtonLocation);
         tvSearching = findViewById(R.id.tvSearching);
         etInputSearch = findViewById(R.id.currentLocation);
         btnCancel = findViewById(R.id.btnCancel1);
@@ -184,6 +187,11 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
         btnRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(etInputSearch.getEditableText() != null){
+                    raduis = Integer.parseInt(etInputSearch.getEditableText().toString());
+                }else {
+                    raduis = 1;
+                }
                 if(mLocationPermissionGranted == true){
 //                    progressDialog.show();
                     saveLocation();
@@ -191,6 +199,16 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
                     btnCancel.setVisibility(View.GONE);
                     btnRequest.setVisibility(View.GONE);
                     showNearestVolunteer();
+                    tvSearching.setVisibility(View.VISIBLE);
+                    tvSearching.setText("Wait Searching....");
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            // Actions to do after 5 seconds
+
+
+                        }
+                    }, 5000);
 
                 }else{
                     getLocationPermission();
@@ -207,9 +225,14 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
     }
 
+    private Boolean driverFound = false;
+    private String driverFoundID;
+    GeoQuery geoQuery;
     private void showNearestVolunteer() {
-        databaseReference4 = FirebaseDatabase.getInstance().getReference().child("GeoFire").child("NeedyOn");
-        geoFire = new GeoFire(databaseReference4);
+//        databaseReference4 = FirebaseDatabase.getInstance().getReference().child("GeoFire").child("NeedyOn");
+//        geoFire = new GeoFire(databaseReference4);
+////        geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
+//        geoQuery.removeAllListeners();
 //        geoFire.setLocation();
     }
 
@@ -217,7 +240,9 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
         locationManager.removeUpdates(locationListener);
         DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference().child("NeedyOn").child(user.getUid());
         databaseReference3.removeValue();
+        FirebaseDatabase.getInstance().getReference().child("GeoFire").child("NeedyOn").child(user.getUid()).removeValue();
         geoFire.removeLocation("You");
+        geoQuery.removeAllListeners();
         progressDialog.dismiss();
     }
 
@@ -252,15 +277,19 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12.0f));
                                 mMap.addCircle(new CircleOptions()
                                         .center(new LatLng(latitude, longitude))
-                                        .radius(500)
+                                        .radius(100)
                                         .strokeColor(Color.BLUE)
                                         .fillColor(0x220000FF)
                                         .strokeWidth(5.0f)
                                 );
-                                GeoQuery geoQuery = geoFire1.queryAtLocation(new GeoLocation(latitude, longitude),5f);
+
+                                //radius need to be set here
+                                geoQuery = geoFire1.queryAtLocation(new GeoLocation(latitude, longitude),5f);
+                                geoQuery.removeAllListeners();
                                 geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                                     @Override
                                     public void onKeyEntered(String key, GeoLocation location) {
+
                                         mMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(location.latitude, location.longitude))
                                                 .title(key)
