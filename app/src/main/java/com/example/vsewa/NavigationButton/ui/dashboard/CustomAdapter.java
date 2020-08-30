@@ -1,6 +1,7 @@
 package com.example.vsewa.NavigationButton.ui.dashboard;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.vsewa.Messenger.MessengerActivity;
+import com.example.vsewa.NavigationButton.BottomNavigatioActivity;
 import com.example.vsewa.NavigationButton.ui.settings.SettingsFragment;
 import com.example.vsewa.R;
 import com.google.android.material.snackbar.Snackbar;
@@ -125,7 +128,9 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         viewHolder.acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, dataModel.getAge() + dataModel.getGender(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, dataModel.getAge() + dataModel.getGender(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(mContext, MessengerActivity.class);
+                mContext.startActivity(intent);
             }
         });
 
