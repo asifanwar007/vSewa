@@ -97,7 +97,7 @@
             android:id="@+id/btRequest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Request" />
+            android:text="Next" />
 
         <Button
             android:id="@+id/btCancel"

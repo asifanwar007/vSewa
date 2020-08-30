@@ -95,14 +95,19 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         result.startAnimation(animation);
         lastPosition = position;
 
-        Log.d("NameTag", dataModel.getName() + " " + dataModel.getGender());
+        Log.d("NameTag",  dataModel.getImageLink());
         viewHolder.txtName.setText(dataModel.getName());
         viewHolder.txtAgeGender.setText(dataModel.getAge() + ", " + dataModel.getGender());
         viewHolder.txtAddress.setText(dataModel.getAddress());
-        Glide.with(mContext)
+        try {
+            Glide.with(mContext)
 //                        .using(new FirebaseImageLoader())
-                .load(dataModel.getImageLink())
-                .into(viewHolder.info);
+                    .load(dataModel.getImageLink())
+                    .into(viewHolder.info);
+        }catch (Exception e){
+            Log.d("Image Glide", e.getStackTrace().toString());
+        }
+
 //        viewHolder.info.setOnClickListener(this);
 //        viewHolder.info.setTag(position);
         // Return the completed view to render on screen

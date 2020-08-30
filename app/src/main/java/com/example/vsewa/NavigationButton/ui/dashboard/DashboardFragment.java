@@ -5,9 +5,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -67,6 +69,7 @@ public class DashboardFragment extends Fragment implements volunteerRequiredDial
 //                    listView.removeAllViews();
                     ArrayAdapter<DataModel> arrayAdapter = new CustomAdapter(dataModels, getContext());
                     listView.setAdapter(arrayAdapter);
+
                 }else {
                     ArrayList<String> ar = new ArrayList<>();
                     ar.add("No Value");
@@ -74,6 +77,12 @@ public class DashboardFragment extends Fragment implements volunteerRequiredDial
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ar);
                     listView.setAdapter(arrayAdapter);
                 }
+           }
+       });
+       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               Toast.makeText(getContext(), "helo", Toast.LENGTH_SHORT).show();
            }
        });
 //        dashboardViewModel.getData().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {

@@ -99,7 +99,7 @@
             android:layout_marginRight="30dp"
             android:layout_marginBottom="30dp"
             android:visibility="invisible"
-            android:text="Cancel" />
+            android:text="Show List" />
 
 <!--        <ImageButton-->
 <!--            android:id="@+id/imageButtonLocation"-->
