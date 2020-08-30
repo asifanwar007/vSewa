@@ -8,13 +8,16 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.vsewa.NavigationButton.ui.settings.SettingsFragment;
 import com.example.vsewa.R;
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -29,11 +32,13 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         TextView txtAgeGender;
         TextView txtAddress;
         ImageView info;
+        Button acceptButton;
         public ViewHolder(View convertView){
             txtName = (TextView) convertView.findViewById(R.id.name);
             txtAgeGender = (TextView) convertView.findViewById(R.id.itemCheckAge);
             txtAddress = (TextView) convertView.findViewById(R.id.itemCheckAddr);
             info = (ImageView) convertView.findViewById(R.id.itemCheckImage);
+            acceptButton = (Button) convertView.findViewById(R.id.btItemCheckAccept);
         }
     }
 
@@ -51,13 +56,15 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         Object object= getItem(position);
         DataModel dataModel=(DataModel)object;
 
-//        switch (v.getId())
-//        {
-//            case R.id.item_info:
-//                Snackbar.make(v, "Release date " +dataModel.getFeature(), Snackbar.LENGTH_LONG)
-//                        .setAction("No action", null).show();
-//                break;
-//        }
+        Log.d("Onclik", "s " +  v.getId());
+
+        switch (v.getId())
+        {
+            case R.id.btItemCheckAccept:
+                Snackbar.make(v, "Gender " +dataModel.getGender(), Snackbar.LENGTH_LONG)
+                        .setAction("No action", null).show();
+                break;
+        }
     }
 
     private int lastPosition = -1;
@@ -65,7 +72,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        DataModel dataModel = getItem(position);
+        final DataModel dataModel = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 
@@ -100,16 +107,29 @@ public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnCli
         viewHolder.txtAgeGender.setText(dataModel.getAge() + ", " + dataModel.getGender());
         viewHolder.txtAddress.setText(dataModel.getAddress());
         try {
-            Glide.with(mContext)
-//                        .using(new FirebaseImageLoader())
-                    .load(dataModel.getImageLink())
-                    .into(viewHolder.info);
+//            Glide.with(mContext)
+////                        .using(new FirebaseImageLoader())
+//                    .load(dataModel.getImageLink())
+//                    .into(viewHolder.info);
+
+            Picasso.get().load(dataModel.getImageLink()).resize(500,300).into(viewHolder.info);
         }catch (Exception e){
             Log.d("Image Glide", e.getStackTrace().toString());
         }
 
-//        viewHolder.info.setOnClickListener(this);
-//        viewHolder.info.setTag(position);
+
+
+
+        viewHolder.info.setOnClickListener(this);
+        viewHolder.info.setTag(position);
+        viewHolder.acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, dataModel.getAge() + dataModel.getGender(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         // Return the completed view to render on screen
         return convertView;
     }

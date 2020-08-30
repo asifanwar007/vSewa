@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.vsewa.Dialogs.volunteerRequiredDialogs;
 import com.example.vsewa.R;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,12 +80,17 @@ public class DashboardFragment extends Fragment implements volunteerRequiredDial
                 }
            }
        });
-       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-           @Override
-           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               Toast.makeText(getContext(), "helo", Toast.LENGTH_SHORT).show();
-           }
-       });
+//       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//           @Override
+//           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//               DataModel dm = myDataset.get(position);
+//               Snackbar.make(view, dm.getName()+"\n" + dm.getAge(), Snackbar.LENGTH_LONG)
+//                       .setAction("No action", null).show();
+//               Toast.makeText(getActivity(), "helo", Toast.LENGTH_SHORT).show();
+//           }
+//       });
+
+
 //        dashboardViewModel.getData().observe(getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
 //            @Override
 //            public void onChanged(ArrayList<String> strings) {
