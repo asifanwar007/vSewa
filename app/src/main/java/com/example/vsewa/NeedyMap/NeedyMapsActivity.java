@@ -1,7 +1,6 @@
 package com.example.vsewa.NeedyMap;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -16,28 +15,25 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.vsewa.Dialogs.volunteerRequiredDialogs;
-import com.example.vsewa.NavigationButton.ui.home.HomeFragment;
+import com.example.vsewa.NavigationButton.BottomNavigatioActivity;
+import com.example.vsewa.NavigationButton.ui.dashboard.DashboardFragment;
 import com.example.vsewa.R;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryDataEventListener;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -47,8 +43,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -60,15 +54,12 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCallback, volunteerRequiredDialogs.volunteerRequiredDialogListener {
 
@@ -106,9 +97,9 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
     private LatLng[] mLikelyPlaceLatLngs;
     private volunteerRequiredDialogs reasonDialog;
     private String volunteerGender, reasonRequired;
-    private int noOfVolunteerRequired;
+    private int noOfVolunteerRequired, raduis;
 
-    private Button btnRequest, btnCancelRequest, btnCancel;
+    private Button btnRequest, btnShowList, btnCancel;
     private ImageButton currentLocationButton;
     private ProgressDialog progressDialog;
     private TextView tvSearching;
@@ -121,6 +112,7 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
     private LocationManager locationManager;
     private LocationListener locationListener;
     private GeoFire geoFire, geoFire1;
+
 
 
 
@@ -148,8 +140,8 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
         progressDialog.setCancelable(false);
 
         btnRequest = findViewById(R.id.btnRequest);
-        btnCancelRequest = findViewById(R.id.btnCancel);
-        currentLocationButton = findViewById(R.id.imageButtonLocation);
+        btnShowList = findViewById(R.id.btnCancel);
+//        currentLocationButton = findViewById(R.id.imageButtonLocation);
         tvSearching = findViewById(R.id.tvSearching);
         etInputSearch = findViewById(R.id.currentLocation);
         btnCancel = findViewById(R.id.btnCancel1);
@@ -162,18 +154,18 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteLocation();
-                Intent intent = new Intent(NeedyMapsActivity.this, HomeFragment.class);
+                deleteNeedyLocation();
+                Intent intent = new Intent(NeedyMapsActivity.this, BottomNavigatioActivity.class);
                 startActivity(intent);
                 finish();
             }
         });
 
-        btnCancelRequest.setOnClickListener(new View.OnClickListener() {
+        btnShowList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteLocation();
-                Intent intent = new Intent(NeedyMapsActivity.this, HomeFragment.class);
+                Intent intent = new Intent(getApplicationContext(), BottomNavigatioActivity.class);
+//                startActivityFromFragment(new DashboardFragment(), intent, 1);
                 startActivity(intent);
                 finish();
             }
@@ -183,13 +175,30 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
         btnRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(TextUtils.isEmpty(etInputSearch.getEditableText().toString())){
+                    raduis = 1;
+                }else {
+                    raduis = Integer.parseInt(etInputSearch.getEditableText().toString());
+                }
                 if(mLocationPermissionGranted == true){
 //                    progressDialog.show();
                     saveLocation();
-                    btnCancelRequest.setVisibility(View.VISIBLE);
-                    btnCancel.setVisibility(View.GONE);
+
+//                    btnCancel.setVisibility(View.GONE);
+                    etInputSearch.setVisibility(View.GONE);
                     btnRequest.setVisibility(View.GONE);
                     showNearestVolunteer();
+                    tvSearching.setVisibility(View.VISIBLE);
+                    tvSearching.setText("Wait Searching....");
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            // Actions to do after 5 seconds
+                            btnShowList.setVisibility(View.VISIBLE);
+
+                        }
+                    }, 5000);
+
 
                 }else{
                     getLocationPermission();
@@ -206,17 +215,30 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
     }
 
+    private Boolean driverFound = false;
+    private String driverFoundID;
+    GeoQuery geoQuery;
     private void showNearestVolunteer() {
-        databaseReference4 = FirebaseDatabase.getInstance().getReference().child("GeoFire").child("NeedyOn");
-        geoFire = new GeoFire(databaseReference4);
+//        databaseReference4 = FirebaseDatabase.getInstance().getReference().child("GeoFire").child("NeedyOn");
+//        geoFire = new GeoFire(databaseReference4);
+////        geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
+//        geoQuery.removeAllListeners();
 //        geoFire.setLocation();
     }
 
-    private void deleteLocation() {
+    private void deleteVolunteerLocation() {
         locationManager.removeUpdates(locationListener);
-        DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference().child("NeedyOn").child(user.getUid());
-        databaseReference3.removeValue();
+        FirebaseDatabase.getInstance().getReference().child("GeoFire").child("VolunteerOn").child(user.getUid()).removeValue();
+//        geoFire.removeLocation("You");
+//        geoQuery.removeAllListeners();
+        progressDialog.dismiss();
+    }
+
+    private void deleteNeedyLocation(){
+        locationManager.removeUpdates(locationListener);
+        FirebaseDatabase.getInstance().getReference().child("GeoFire").child("NeedyOn").child(user.getUid()).removeValue();
         geoFire.removeLocation("You");
+        geoQuery.removeAllListeners();
         progressDialog.dismiss();
     }
 
@@ -251,15 +273,20 @@ public class NeedyMapsActivity extends FragmentActivity implements OnMapReadyCal
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12.0f));
                                 mMap.addCircle(new CircleOptions()
                                         .center(new LatLng(latitude, longitude))
-                                        .radius(500)
+                                        .radius(100)
                                         .strokeColor(Color.BLUE)
                                         .fillColor(0x220000FF)
                                         .strokeWidth(5.0f)
                                 );
-                                GeoQuery geoQuery = geoFire1.queryAtLocation(new GeoLocation(latitude, longitude),5f);
+
+                                //radius need to be set here
+
+                                geoQuery = geoFire1.queryAtLocation(new GeoLocation(latitude, longitude),raduis);
+                                geoQuery.removeAllListeners();
                                 geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
                                     @Override
                                     public void onKeyEntered(String key, GeoLocation location) {
+
                                         mMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(location.latitude, location.longitude))
                                                 .title(key)

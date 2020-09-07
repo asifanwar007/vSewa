@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.vsewa.Authentication.LoginWithEmailId;
+import com.example.vsewa.Messenger.MessengerActivity;
+import com.example.vsewa.Messenger.MessengerList;
 import com.example.vsewa.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,6 +60,10 @@ public class BottomNavigatioActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.message:
+                Intent intent = new Intent(BottomNavigatioActivity.this, MessengerActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.logout:
                 logOut();
                 return true;
@@ -77,11 +83,11 @@ public class BottomNavigatioActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, LoginWithEmailId.class);
         startActivity(intent);
-        finish();
-    }
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(true);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        moveTaskToBack(true);
+    }
 }

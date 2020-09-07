@@ -86,6 +86,7 @@ public class volunteerRequiredDialogs extends AppCompatDialogFragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), BottomNavigatioActivity.class);
                 startActivity(intent);
+
             }
         });
 

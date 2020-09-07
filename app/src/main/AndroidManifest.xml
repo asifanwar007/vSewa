@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.vsewa">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -18,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NoInternetTheme">
-
+        <activity android:name=".Messenger.MessengerList"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -33,7 +32,7 @@
 
         <activity
             android:name=".NeedyMap.NeedyMapsActivity"
-            android:label="Map"></activity>
+            android:label="Map" />
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
@@ -45,6 +44,7 @@
         <activity android:name=".Authentication.RegisterWithEmailActivity" />
         <activity android:name=".Authentication.ForgotPassword" />
         <activity android:name=".Authentication.LoginWithEmailId" />
+        <activity android:name=".Messenger.MessengerActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
